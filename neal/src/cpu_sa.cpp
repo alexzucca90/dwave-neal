@@ -17,6 +17,10 @@
 #include <math.h>
 #include <vector>
 #include <stdexcept>
+#include <algorithm>    // std::random_shuffle
+#include <ctime>        // std::time
+#include <cstdlib>      // std::rand, std::srand
+
 #include "cpu_sa.h"
 
 // xorshift128+ as defined https://en.wikipedia.org/wiki/Xorshift#xorshift.2B
@@ -96,6 +100,12 @@ void simulated_annealing_run(
     const vector<double>& beta_schedule
 ) {
     const int num_vars = h.size();
+    std::srand ( unsigned ( std::time(0) ) );
+    std::vector<int> vars_order;
+    for (int var=0; var<num_vars; var++){
+        vars_order.push_back(var);
+    }
+
 
     // this double array will hold the delta energy for every variable
     // delta_energy[v] is the delta energy for variable `v`
@@ -125,7 +135,11 @@ void simulated_annealing_run(
             // the probability.
             const double threshold = 44.36142 / beta;
 
-            for (int var = 0; var < num_vars; var++) {
+            // shuffle variables
+            std::random_shuffle ( vars_order.begin(), vars_order.end() );
+
+            for (int i_var = 0; i_var < num_vars; i_var++) {
+                int var = vars_order[i_var];
                 if (delta_energy[var] >= threshold) continue;
 
                 flip_spin = false;
