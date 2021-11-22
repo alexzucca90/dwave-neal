@@ -100,7 +100,6 @@ void simulated_annealing_run(
     const vector<double>& beta_schedule
 ) {
     const int num_vars = h.size();
-    std::srand ( unsigned ( std::time(0) ) );
     std::vector<int> vars_order;
     for (int var=0; var<num_vars; var++){
         vars_order.push_back(var);
@@ -273,6 +272,9 @@ int general_simulated_annealing(
     // note that xorshift+ requires a non-zero seed
     rng_state[0] = seed ? seed : RANDMAX;
     rng_state[1] = 0;
+
+    // Seed for default random generator
+    std::srand ( unsigned ( seed ) );
 
     // degrees will be a vector of the degrees of each variable
     vector<int> degrees(num_vars, 0);
